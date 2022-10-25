@@ -31,6 +31,7 @@ dependencies {
 
     // Feature - Defaults
     implementation("com.github.johnrengelman.shadow:com.github.johnrengelman.shadow.gradle.plugin:7.1.2")
+    implementation("com.palantir.git-version:com.palantir.git-version.gradle.plugin:0.15.0")
 
     // Feature - Paper
     implementation("net.minecrell:plugin-yml:0.5.2")

@@ -1,6 +1,9 @@
 package gg.hubblemc.defaults
 
+import com.palantir.gradle.gitversion.GitVersionPlugin
 import java.util.Properties
+
+apply<GitVersionPlugin>()
 
 // Inject properties from the root project's "local.properties" file
 // into the project's properties.
@@ -16,6 +19,10 @@ localProperties.forEach { key, value ->
 }
 
 // Allow the project version to be defined by a property
-version = project.property("version")?.toString().takeUnless { it == "unspecified" }
-    ?: rootProject.version.toString().takeUnless { it == "unspecified" }
-    ?: version
+val gitVersion: groovy.lang.Closure<String> by extra
+version = project.property("version")?.unlessUnspecified()
+    ?: rootProject.version.toString().unlessUnspecified()
+    ?: version.unlessUnspecified()
+    ?: "Git-${gitVersion()}"
+
+fun Any.unlessUnspecified(): String? = toString().takeUnless { it == "unspecified" }
