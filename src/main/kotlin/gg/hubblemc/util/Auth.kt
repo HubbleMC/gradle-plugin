@@ -1,13 +1,14 @@
 package gg.hubblemc.util
 
 import org.gradle.api.Project
+import org.gradle.api.artifacts.dsl.RepositoryHandler
 import org.gradle.api.artifacts.repositories.MavenArtifactRepository
 import org.gradle.kotlin.dsl.maven
 
-fun Project.authenticatedMaven(url: String, name: String, block: MavenArtifactRepository.() -> Unit = {}) {
-    repositories.maven(url) {
+fun RepositoryHandler.authenticatedMaven(url: String, name: String, project: Project, block: MavenArtifactRepository.() -> Unit = {}) {
+    maven(url) {
         this.block()
-        propertyCredentials(this@authenticatedMaven, name)
+        propertyCredentials(project, name)
     }
 }
 
