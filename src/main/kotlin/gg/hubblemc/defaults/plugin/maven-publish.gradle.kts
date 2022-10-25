@@ -20,6 +20,6 @@ configure<PublishingExtension> {
         // Environment: HUBBLE_USERNAME, HUBBLE_PASSWORD
         val snapshot = project.extra["hubble.release"] != true
         val repoType = if (snapshot) "snapshots" else "releases"
-        authenticatedMaven("https://repo.koding.dev/repository/hubble-$repoType/", "hubble")
+        authenticatedMaven("https://repo.koding.dev/hubble-$repoType/", "hubble")
     }
 }

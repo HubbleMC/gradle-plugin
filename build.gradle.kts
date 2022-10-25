@@ -49,3 +49,18 @@ gradlePlugin {
         }
     }
 }
+
+configure<PublishingExtension> {
+    repositories {
+        // Hubble - Authenticated
+        // To use this, you must set either
+        // Properties: hubble.username, hubble.password
+        // Environment: HUBBLE_USERNAME, HUBBLE_PASSWORD
+        maven("https://repo.koding.dev/hubble-releases/") {
+            credentials {
+                username = project.findProperty("hubble.username") as String? ?: System.getenv("HUBBLE_USERNAME")
+                password = project.findProperty("hubble.password") as String? ?: System.getenv("HUBBLE_PASSWORD")
+            }
+        }
+    }
+}
