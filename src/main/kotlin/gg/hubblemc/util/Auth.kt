@@ -24,6 +24,6 @@ fun MavenArtifactRepository.propertyCredentials(project: Project, prefix: String
  *
  * @param name The name of the property, formatted as `project.property.name`.
  */
-private fun Project.propertyOrEnv(name: String): String? =
+fun Project.propertyOrEnv(name: String): String? =
     if (hasProperty(name)) property(name) as String
     else System.getenv(name.toUpperCase().replace('.', '_'))

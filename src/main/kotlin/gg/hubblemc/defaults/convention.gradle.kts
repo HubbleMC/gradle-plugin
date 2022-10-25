@@ -1,6 +1,8 @@
 package gg.hubblemc.defaults
 
 import com.palantir.gradle.gitversion.GitVersionPlugin
+import gg.hubblemc.util.ReleaseType
+import gg.hubblemc.util.releaseType
 import java.util.Properties
 
 apply<GitVersionPlugin>()
@@ -26,7 +28,6 @@ version = project.property("version")?.unlessUnspecified()
     ?: "Git-${gitVersion()}"
 
 // Suffix the version with "-SNAPSHOT" if the project is not a release
-project.extra["hubble.release"] = project.findProperty("hubble.release")?.toString()?.toBoolean() != true
-if (project.extra["hubble.release"] != true) version = "$version-SNAPSHOT"
+if (project.releaseType == ReleaseType.SNAPSHOT && !version.toString().contains("-SNAPSHOT")) version = "$version-SNAPSHOT"
 
 fun Any.unlessUnspecified(): String? = toString().takeUnless { it == "unspecified" }
