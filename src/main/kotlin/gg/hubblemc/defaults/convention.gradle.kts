@@ -25,7 +25,7 @@ val gitVersion: groovy.lang.Closure<String> by extra
 version = project.property("version")?.unlessUnspecified()
     ?: rootProject.version.toString().unlessUnspecified()
     ?: version.unlessUnspecified()
-    ?: "Git-${gitVersion()}"
+    ?: "Git-${gitVersion().removeSuffix(".dirty")}"
 
 // Suffix the version with "-SNAPSHOT" if the project is not a release
 if (project.releaseType == ReleaseType.SNAPSHOT && !version.toString().contains("-SNAPSHOT")) version = "$version-SNAPSHOT"
