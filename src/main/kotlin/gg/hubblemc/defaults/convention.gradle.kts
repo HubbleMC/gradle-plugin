@@ -27,6 +27,12 @@ version = project.property("version")?.unlessUnspecified()
     ?: version.unlessUnspecified()
     ?: "Git-${gitVersion().removeSuffix(".dirty")}"
 
+// Inherit project group from root project
+group = project.property("group")?.unlessUnspecified()
+    ?: rootProject.group.toString().unlessUnspecified()
+    ?: group.unlessUnspecified()
+    ?: "gg.hubblemc"
+
 // Suffix the version with "-SNAPSHOT" if the project is not a release
 if (project.releaseType == ReleaseType.SNAPSHOT && !version.toString().contains("-SNAPSHOT")) version = "$version-SNAPSHOT"
 
