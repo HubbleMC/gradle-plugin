@@ -4,8 +4,9 @@ import org.gradle.api.Project
 import org.gradle.api.artifacts.repositories.MavenArtifactRepository
 import org.gradle.kotlin.dsl.maven
 
-fun Project.authenticatedMaven(url: String, name: String) {
+fun Project.authenticatedMaven(url: String, name: String, block: MavenArtifactRepository.() -> Unit = {}) {
     repositories.maven(url) {
+        this.block()
         propertyCredentials(this@authenticatedMaven, name)
     }
 }
