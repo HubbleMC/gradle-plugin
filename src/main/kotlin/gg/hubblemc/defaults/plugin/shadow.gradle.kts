@@ -7,7 +7,7 @@ val shadowJar by tasks.named<ShadowJar>("shadowJar")
 
 // Ensure that the shadow configuration is used for the API
 configurations {
-    "api" {
+    findByName("api")?.apply {
         isCanBeResolved = true
         extendsFrom(shadow)
     }
