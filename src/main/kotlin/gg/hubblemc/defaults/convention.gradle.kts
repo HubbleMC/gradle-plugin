@@ -25,4 +25,8 @@ version = project.property("version")?.unlessUnspecified()
     ?: version.unlessUnspecified()
     ?: "Git-${gitVersion()}"
 
+// Suffix the version with "-SNAPSHOT" if the project is not a release
+project.extra["hubble.release"] = project.findProperty("hubble.release")?.toString()?.toBoolean() != true
+if (project.extra["hubble.release"] != true) version = "$version-SNAPSHOT"
+
 fun Any.unlessUnspecified(): String? = toString().takeUnless { it == "unspecified" }
