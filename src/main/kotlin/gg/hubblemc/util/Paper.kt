@@ -25,5 +25,9 @@ fun RunServerTask.addPluginDependency(project: Project) {
     dependsOn(buildTaskProvider)
 
     // Add the plugin
-    pluginJars(*pluginJars.plus(pluginJar).toTypedArray())
+    // Ignore the thrown exception, happens randomly with the
+    // cleanCaches task and nowhere else
+    runCatching {
+        pluginJars(*pluginJars.plus(pluginJar).toTypedArray())
+    }
 }
