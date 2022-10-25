@@ -2,9 +2,9 @@ package gg.hubblemc.util
 
 import org.gradle.api.Project
 
-enum class ReleaseType(val display: String) {
-    SNAPSHOT("Snapshot"),
-    RELEASE("Release"),
+enum class ReleaseType(val id: String, val display: String) {
+    SNAPSHOT("snapshots", "Snapshot"),
+    RELEASE("releases", "Release"),
 }
 
 val Project.releaseType: ReleaseType

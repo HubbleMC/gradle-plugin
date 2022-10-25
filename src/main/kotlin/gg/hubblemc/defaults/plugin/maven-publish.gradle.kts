@@ -14,7 +14,7 @@ configure<PublishingExtension> {
         // Properties: hubble.username, hubble.password
         // Environment: HUBBLE_USERNAME, HUBBLE_PASSWORD
         val releaseType = project.releaseType
-        authenticatedMaven("https://repo.koding.dev/hubble-${releaseType.name.toLowerCase()}/", "hubble", project) {
+        authenticatedMaven("https://repo.koding.dev/hubble-${releaseType.id}/", "hubble", project) {
             name = "Hubble${releaseType.display}"
         }
     }
