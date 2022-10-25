@@ -9,7 +9,6 @@ configure<JavaPluginExtension> {
     targetCompatibility = JavaVersion.VERSION_17
 
     withSourcesJar()
-    withJavadocJar()
 }
 
 tasks {
