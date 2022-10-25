@@ -7,13 +7,6 @@ plugins {
 }
 
 configure<PublishingExtension> {
-    publications {
-        if (findByName("maven") != null) return@publications
-        create<MavenPublication>("maven") {
-            from(components["java"])
-        }
-    }
-
     repositories {
         // Hubble - Authenticated
         // To use this, you must set either
