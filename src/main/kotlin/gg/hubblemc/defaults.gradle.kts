@@ -15,17 +15,29 @@ pluginManager.withPlugin("org.jetbrains.kotlin.jvm") { apply(plugin = "gg.hubble
 pluginManager.withPlugin("com.github.johnrengelman.shadow") { apply(plugin = "gg.hubblemc.defaults.plugin.shadow") }
 
 // Print build info
-if (!project.hasProperty("silent")) {
-    if (rootProject == project) {
-        val username = rootProject.propertyOrEnv("hubble.username")
-        val password = rootProject.propertyOrEnv("hubble.password")
+gradle.projectsEvaluated {
+    if (!project.hasProperty("silent")) {
+        if (rootProject == project) {
+            val username = rootProject.propertyOrEnv("hubble.username")
+            val password = rootProject.propertyOrEnv("hubble.password")
 
-        logger.lifecycle("+---------<HUBBLE>----------+")
-        logger.lifecycle("Local properties? ${rootProject.file("local.properties").exists().yesNo()}")
-        logger.lifecycle("Authenticated? ${(username != null && password != null).yesNo()}${if (username != null && password != null) " ($username)" else ""}")
-        logger.lifecycle("+---------------------------+")
-        logger.lifecycle("")
+            logger.lifecycle(
+                """
+                  _  _  _   _  ___  ___  _     ___ 
+                 | || || | | || _ )| _ )| |   | __|
+                 | __ || |_| || _ \| _ \| |__ | _| 
+                 |_||_| \___/ |___/|___/|____||___|
+                """.trimIndent()
+            )
+
+            logger.lifecycle("")
+            logger.lifecycle("Build Info")
+            logger.lifecycle("  Local properties? ${rootProject.file("local.properties").exists().yesNo()}")
+            logger.lifecycle("  Authenticated? ${(username != null && password != null).yesNo()}${if (username != null && password != null) " ($username)" else ""}")
+            logger.lifecycle("")
+        }
+
+        val groupPrefix = group.takeIf { it.toString().isNotBlank() }?.let { "$it." } ?: ""
+        logger.lifecycle("Building $groupPrefix${project.name} (version $version - release type ${project.releaseType})")
     }
-
-    logger.lifecycle("Building ${project.name} (version $version - release type ${project.releaseType})")
 }

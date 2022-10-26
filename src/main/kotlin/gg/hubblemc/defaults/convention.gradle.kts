@@ -28,12 +28,12 @@ version = project.property("version")?.unlessUnspecified()
     ?: "Git-${gitVersion().removeSuffix(".dirty")}"
 
 // Inherit project group from root project
-group = project.property("group")?.unlessUnspecified()
-    ?: rootProject.group.toString().unlessUnspecified()
+group = rootProject.group.toString().unlessUnspecified()
     ?: group.unlessUnspecified()
     ?: "gg.hubblemc"
 
 // Suffix the version with "-SNAPSHOT" if the project is not a release
-if (project.releaseType == ReleaseType.SNAPSHOT && !version.toString().contains("-SNAPSHOT")) version = "$version-SNAPSHOT"
+if (project.releaseType == ReleaseType.SNAPSHOT && !version.toString().contains("-SNAPSHOT")) version =
+    "$version-SNAPSHOT"
 
-fun Any.unlessUnspecified(): String? = toString().takeUnless { it == "unspecified" }
+fun Any.unlessUnspecified(): String? = toString().takeUnless { it == "unspecified" || it.isBlank() }
