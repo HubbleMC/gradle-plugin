@@ -90,7 +90,7 @@ abstract class PaperPlugin : Plugin<Project> {
                 if (dependencyPlugins.isNotEmpty()) {
                     tasks.withType<RunServerTask> {
                         dependencyPlugins.forEach {
-                            addPluginDependency(it)
+                            addPluginDependency(project(it))
                         }
                     }
                 }
