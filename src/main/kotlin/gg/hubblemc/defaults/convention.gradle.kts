@@ -16,8 +16,10 @@ val localProperties = File("local.properties")
 
 localProperties.forEach { key, value ->
     val keyString = key.toString()
-    if (hasProperty(keyString)) setProperty(keyString, value)
-    else extra.set(keyString, value)
+
+    // because, gradle
+    runCatching { setProperty(keyString, value) }
+    extra.set(keyString, value)
 }
 
 // Allow the project version to be defined by a property
