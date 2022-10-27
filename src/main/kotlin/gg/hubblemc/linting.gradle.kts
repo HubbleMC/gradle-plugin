@@ -25,11 +25,6 @@ configure<SpotlessExtension> {
         target("src/**/*.json")
         gson().indentWithSpaces(4).sortByKeys().escapeHtml()
     }
-
-    format("prettier") {
-        target("src/**/.yml", "src/**/.yaml")
-        prettier()
-    }
 }
 
 // Configure ktlint
