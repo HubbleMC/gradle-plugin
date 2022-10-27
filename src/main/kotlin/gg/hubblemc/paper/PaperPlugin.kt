@@ -61,7 +61,7 @@ abstract class PaperPlugin : Plugin<Project> {
                 }
             }
 
-            afterEvaluate {
+            gradle.projectsEvaluated {
                 // Configure the Bukkit YAML plugin
                 configure<BukkitPluginDescription> {
                     apiVersion = extension.mcVersion.get().split(".").take(2).joinToString(".")
