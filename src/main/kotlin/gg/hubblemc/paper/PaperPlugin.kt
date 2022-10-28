@@ -1,7 +1,7 @@
 package gg.hubblemc.paper
 
 import gg.hubblemc.tasks.FileDownloadTask
-import gg.hubblemc.util.addPluginDependency
+import gg.hubblemc.util.addProjectDependency
 import io.papermc.paperweight.userdev.PaperweightUser
 import net.minecrell.pluginyml.bukkit.BukkitPlugin
 import net.minecrell.pluginyml.bukkit.BukkitPluginDescription
@@ -28,6 +28,12 @@ abstract class PaperPlugin : Plugin<Project> {
             apply<BukkitPlugin>()
             apply<PaperweightUser>()
             apply<RunPaper>()
+
+            // Create a new configuration to download plugin jars and
+            // add it as a dependency to the "runServer" task
+            val pluginJarsConfiguration = configurations.create("pluginJars") {
+                isTransitive = false
+            }
 
             // Add task dependencies
             tasks.named("assemble") {
@@ -90,8 +96,22 @@ abstract class PaperPlugin : Plugin<Project> {
                 if (dependencyPlugins.isNotEmpty()) {
                     tasks.withType<RunServerTask> {
                         dependencyPlugins.forEach {
-                            addPluginDependency(project(it))
+                            addProjectDependency(project(it))
                         }
+                    }
+                }
+
+                // Add JARs from the pluginJars configuration to the runServer tasks
+                tasks.withType<RunServerTask> {
+                    doFirst {
+                        args(
+                            args.plus(
+                                pluginJarsConfiguration.files.map { it.absolutePath }.distinct()
+                                    .map { "--add-plugin=$it" }
+                            )
+                        )
+
+                        logger.lifecycle("Running server with args: $args")
                     }
                 }
             }

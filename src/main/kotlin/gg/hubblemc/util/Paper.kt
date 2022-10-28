@@ -6,7 +6,7 @@ import org.gradle.jvm.tasks.Jar
 import org.gradle.kotlin.dsl.named
 import xyz.jpenilla.runpaper.task.RunServerTask
 
-fun RunServerTask.addPluginDependency(project: Project) {
+fun RunServerTask.addProjectDependency(project: Project) {
     val mojangMapped = name.endsWith("runMojangMappedServer") // TODO: This is a hack, find a better way to do this
 
     // Get the build task
