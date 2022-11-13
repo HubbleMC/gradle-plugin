@@ -1,13 +1,33 @@
+import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+
+/*
+ * HubbleMC - Gradle Plugin
+ * Copyright (C) 2022  Zerite Development
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
 plugins {
     `kotlin-dsl`
     `maven-publish`
+    id("com.gradle.plugin-publish") version "1.1.0"
 }
 
 repositories {
     mavenCentral()
     gradlePluginPortal()
 
-    maven("https://jitpack.io")
     maven("https://repo.papermc.io/repository/maven-public/")
 }
 
@@ -32,7 +52,7 @@ dependencies {
 
     // Feature - Paper
     implementation("net.minecrell:plugin-yml:0.5.2")
-    implementation("com.github.InnitGG:run-paper:7388ecca0f")
+    implementation("xyz.jpenilla.run-paper:xyz.jpenilla.run-paper.gradle.plugin:1.1.0")
     implementation("io.papermc.paperweight.userdev:io.papermc.paperweight.userdev.gradle.plugin:1.3.7")
 
     // Other dependencies
@@ -41,13 +61,42 @@ dependencies {
 
 java.withSourcesJar()
 
+tasks.withType<KotlinCompile> {
+    kotlinOptions {
+        jvmTarget = "17"
+    }
+}
+
 gradlePlugin {
     plugins {
         create("gg.hubblemc.paper") {
             id = "gg.hubblemc.paper"
+            displayName = "HubbleMC Paper Plugin"
+            description = "Utilities for developing Paper plugins."
             implementationClass = "gg.hubblemc.paper.PaperPlugin"
         }
+
+        named("gg.hubblemc.linting").configure {
+            displayName = "HubbleMC Linting Plugin"
+            description = "Pre-configured linting for HubbleMC projects."
+        }
+
+        named("gg.hubblemc.velocity").configure {
+            displayName = "HubbleMC Velocity Plugin"
+            description = "Utilities for developing Velocity plugins."
+        }
+
+        named("gg.hubblemc.defaults").configure {
+            displayName = "HubbleMC Defaults Plugin"
+            description = "Pre-configured defaults for HubbleMC projects."
+        }
     }
+}
+
+pluginBundle {
+    website = "https://zerite.dev"
+    vcsUrl = "https://github.com/HubbleMC/gradle-plugin"
+    tags = listOf("spigot", "paper", "minecraft")
 }
 
 configure<PublishingExtension> {

@@ -16,8 +16,20 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package gg.hubblemc
+package gg.hubblemc.defaults.plugin
 
-import gg.hubblemc.tasks.RunVelocity
+import org.gradle.api.Project
+import org.gradle.kotlin.dsl.named
+import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
-tasks.register<RunVelocity>("runVelocity")
+internal fun applyDefaultsPluginKotlin(project: Project) {
+    project.tasks.apply {
+        named<KotlinCompile>("compileKotlin") {
+            kotlinOptions.jvmTarget = "17"
+        }
+
+        named<KotlinCompile>("compileTestKotlin") {
+            kotlinOptions.jvmTarget = "17"
+        }
+    }
+}
