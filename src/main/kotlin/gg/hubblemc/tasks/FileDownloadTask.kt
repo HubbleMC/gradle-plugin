@@ -55,8 +55,15 @@ abstract class FileDownloadTask : DefaultTask() {
     @TaskAction
     fun run() {
         urls.forEach { url ->
+            val parsedUrl = runCatching { URL(url) }.getOrNull()
+                ?: throw IllegalArgumentException("Invalid URL: $url")
+
             // Store the filename
-            val fileName = "${url.sha256()}.${url.split(".").last()}"
+            val ext = parsedUrl.path.split("/").last().let {
+                if (it.contains(".")) it.substringAfterLast(".") else ""
+            }
+
+            val fileName = "${url.sha256()}.$ext"
             val dest = destDir.file(fileName).get().asFile
 
             // Add the file to the output files
@@ -71,8 +78,13 @@ abstract class FileDownloadTask : DefaultTask() {
             // Download the file
             logger.info("Downloading $url to $dest")
             dest.parentFile.mkdirs()
-            dest.createNewFile()
-            dest.writeBytes(URL(url).readBytes())
+
+            val connection = parsedUrl.openConnection()
+            connection.addRequestProperty(
+                "User-Agent",
+                "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/107.0.0.0 Safari/537.36"
+            )
+            dest.writeBytes(connection.getInputStream().readBytes())
             logger.info("Downloaded $url to $dest")
         }
     }
