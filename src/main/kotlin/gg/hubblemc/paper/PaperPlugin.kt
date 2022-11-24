@@ -26,9 +26,12 @@ import net.minecrell.pluginyml.bukkit.BukkitPluginDescription
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.file.DuplicatesStrategy
+import org.gradle.api.plugins.BasePluginExtension
 import org.gradle.kotlin.dsl.apply
 import org.gradle.kotlin.dsl.configure
 import org.gradle.kotlin.dsl.dependencies
+import org.gradle.kotlin.dsl.getByName
+import org.gradle.kotlin.dsl.getByType
 import org.gradle.kotlin.dsl.register
 import org.gradle.kotlin.dsl.withType
 import org.gradle.language.jvm.tasks.ProcessResources
@@ -132,6 +135,10 @@ abstract class PaperPlugin : Plugin<Project> {
                         logger.lifecycle("Running server with args: $args")
                     }
                 }
+
+                // Get the gradle plugin description & update archiveName
+                val pluginDescription = project.extensions.getByType<BukkitPluginDescription>()
+                extensions.getByName<BasePluginExtension>("base").archivesName.set(pluginDescription.name)
             }
         }
     }
