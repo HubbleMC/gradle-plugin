@@ -88,6 +88,12 @@ abstract class PaperPlugin : Plugin<Project> {
                 }
             }
 
+            afterEvaluate {
+                // Get the gradle plugin description & update archiveName
+                val pluginDescription = project.extensions.getByType<BukkitPluginDescription>()
+                extensions.getByName<BasePluginExtension>("base").archivesName.set(pluginDescription.name)
+            }
+
             gradle.projectsEvaluated {
                 // Configure the Bukkit YAML plugin
                 configure<BukkitPluginDescription> {
@@ -135,10 +141,6 @@ abstract class PaperPlugin : Plugin<Project> {
                         logger.lifecycle("Running server with args: $args")
                     }
                 }
-
-                // Get the gradle plugin description & update archiveName
-                val pluginDescription = project.extensions.getByType<BukkitPluginDescription>()
-                extensions.getByName<BasePluginExtension>("base").archivesName.set(pluginDescription.name)
             }
         }
     }
