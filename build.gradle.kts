@@ -38,8 +38,8 @@ dependencies {
 
     // Codegen
     implementation("com.squareup:javapoet:1.13.0")
-    implementation("org.apache.httpcomponents:httpclient:4.5.13")
-    implementation("com.google.code.gson:gson:2.9.1")
+    implementation("org.apache.httpcomponents:httpclient:4.5.14")
+    implementation("com.google.code.gson:gson:2.10")
 
     // Feature - Linting
     implementation("com.diffplug.spotless:com.diffplug.spotless.gradle.plugin:6.10.0")
@@ -59,7 +59,13 @@ dependencies {
     implementation("org.jetbrains.kotlin:kotlin-gradle-plugin:1.7.10")
 }
 
-java.withSourcesJar()
+java {
+    toolchain {
+        languageVersion.set(JavaLanguageVersion.of(17))
+    }
+
+    withSourcesJar()
+}
 
 tasks.withType<KotlinCompile> {
     kotlinOptions {

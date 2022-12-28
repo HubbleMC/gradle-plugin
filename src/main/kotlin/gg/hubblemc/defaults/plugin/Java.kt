@@ -18,7 +18,6 @@
 
 package gg.hubblemc.defaults.plugin
 
-import org.gradle.api.JavaVersion
 import org.gradle.api.Project
 import org.gradle.api.file.DuplicatesStrategy
 import org.gradle.api.plugins.JavaPlugin
@@ -27,6 +26,7 @@ import org.gradle.api.tasks.compile.JavaCompile
 import org.gradle.api.tasks.javadoc.Javadoc
 import org.gradle.external.javadoc.StandardJavadocDocletOptions
 import org.gradle.jvm.tasks.Jar
+import org.gradle.jvm.toolchain.JavaLanguageVersion
 import org.gradle.kotlin.dsl.apply
 import org.gradle.kotlin.dsl.configure
 import org.gradle.kotlin.dsl.named
@@ -35,8 +35,9 @@ internal fun applyDefaultsPluginJava(project: Project) {
     project.apply<JavaPlugin>()
 
     project.configure<JavaPluginExtension> {
-        sourceCompatibility = JavaVersion.VERSION_17
-        targetCompatibility = JavaVersion.VERSION_17
+        toolchain {
+            languageVersion.set(JavaLanguageVersion.of(17))
+        }
 
         withSourcesJar()
     }
