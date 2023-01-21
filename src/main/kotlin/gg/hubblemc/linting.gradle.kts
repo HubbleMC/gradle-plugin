@@ -45,7 +45,7 @@ configure<SpotlessExtension> {
 
     json {
         target("src/**/*.json")
-        gson().indentWithSpaces(4).sortByKeys().escapeHtml()
+        gson().indentWithSpaces(4).sortByKeys()
     }
 
     pluginManager.withPlugin("java") {
