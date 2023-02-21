@@ -29,6 +29,7 @@ repositories {
     gradlePluginPortal()
 
     maven("https://repo.papermc.io/repository/maven-public/")
+    maven("https://jitpack.io")
 }
 
 dependencies {
@@ -43,17 +44,20 @@ dependencies {
 
     // Feature - Linting
     implementation("com.diffplug.spotless:com.diffplug.spotless.gradle.plugin:6.10.0")
-    implementation("org.jlleitschuh.gradle.ktlint:org.jlleitschuh.gradle.ktlint.gradle.plugin:11.0.0")
-    implementation("org.jlleitschuh.gradle.ktlint-idea:org.jlleitschuh.gradle.ktlint-idea.gradle.plugin:11.0.0")
+    implementation("org.jlleitschuh.gradle.ktlint:org.jlleitschuh.gradle.ktlint.gradle.plugin:11.2.0")
+    implementation("org.jlleitschuh.gradle.ktlint-idea:org.jlleitschuh.gradle.ktlint-idea.gradle.plugin:11.2.0")
 
     // Feature - Defaults
     implementation("com.github.johnrengelman.shadow:com.github.johnrengelman.shadow.gradle.plugin:7.1.2")
     implementation("com.palantir.git-version:com.palantir.git-version.gradle.plugin:0.15.0")
 
     // Feature - Paper
-    implementation("net.minecrell:plugin-yml:0.5.2")
-    implementation("xyz.jpenilla.run-paper:xyz.jpenilla.run-paper.gradle.plugin:1.1.0")
+    implementation("com.github.jpenilla.plugin-yml:net.minecrell.plugin-yml.bukkit.gradle.plugin:4553fb2dd8")
+    implementation("xyz.jpenilla.run-paper:xyz.jpenilla.run-paper.gradle.plugin:2.0.1")
     implementation("io.papermc.paperweight.userdev:io.papermc.paperweight.userdev.gradle.plugin:1.3.7")
+
+    // Feature - Velocity
+    implementation("xyz.jpenilla.run-velocity:xyz.jpenilla.run-velocity.gradle.plugin:2.0.1")
 
     // Other dependencies
     implementation("org.jetbrains.kotlin:kotlin-gradle-plugin:1.7.10")
@@ -73,36 +77,36 @@ tasks.withType<KotlinCompile> {
     }
 }
 
+@Suppress("UnstableApiUsage")
 gradlePlugin {
+    website.set("https://zerite.dev")
+    vcsUrl.set("https://github.com/HubbleMC/gradle-plugin")
+
     plugins {
-        create("gg.hubblemc.paper") {
-            id = "gg.hubblemc.paper"
+        named("gg.hubblemc.paper").configure {
             displayName = "HubbleMC Paper Plugin"
             description = "Utilities for developing Paper plugins."
-            implementationClass = "gg.hubblemc.paper.PaperPlugin"
+            tags.set(listOf("spigot", "paper", "minecraft"))
         }
 
         named("gg.hubblemc.linting").configure {
             displayName = "HubbleMC Linting Plugin"
             description = "Pre-configured linting for HubbleMC projects."
+            tags.set(listOf("linting", "formatting", "code-style"))
         }
 
         named("gg.hubblemc.velocity").configure {
             displayName = "HubbleMC Velocity Plugin"
             description = "Utilities for developing Velocity plugins."
+            tags.set(listOf("velocity", "minecraft"))
         }
 
         named("gg.hubblemc.defaults").configure {
             displayName = "HubbleMC Defaults Plugin"
             description = "Pre-configured defaults for HubbleMC projects."
+            tags.set(listOf("defaults", "conventions"))
         }
     }
-}
-
-pluginBundle {
-    website = "https://zerite.dev"
-    vcsUrl = "https://github.com/HubbleMC/gradle-plugin"
-    tags = listOf("spigot", "paper", "minecraft")
 }
 
 configure<PublishingExtension> {

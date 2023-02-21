@@ -18,6 +18,34 @@
 
 package gg.hubblemc
 
-import gg.hubblemc.tasks.RunVelocity
+import gg.hubblemc.util.getOrCreate
+import gg.hubblemc.util.requiredPropertyOrEnv
+import gg.hubblemc.util.setup
+import xyz.jpenilla.runvelocity.RunVelocityPlugin
+import xyz.jpenilla.runvelocity.task.RunVelocity
 
-tasks.register<RunVelocity>("runVelocity")
+// Read the properties
+val velocityVersion = requiredPropertyOrEnv("hubble.velocity.version")
+
+// Create a new configuration to download plugin jars and
+// add it as a dependency to the "runServer" task
+val pluginJarsConfiguration: Configuration = configurations.getOrCreate("pluginJarsVelocity") {
+    isTransitive = false
+}
+
+// Apply plugins
+apply<RunVelocityPlugin>()
+
+// Add the dependencies
+dependencies {
+    "implementation"("com.velocitypowered:velocity-api:$velocityVersion")
+    "annotationProcessor"("com.velocitypowered:velocity-api:$velocityVersion")
+}
+
+// Configure the run task
+tasks.withType<RunVelocity> {
+    velocityVersion(velocityVersion)
+
+    // Set up the run task
+    setup(project, "velocity")
+}

@@ -18,8 +18,16 @@
 
 package gg.hubblemc.util
 
+import org.gradle.api.NamedDomainObjectContainer
 import org.gradle.api.Project
+import org.gradle.api.Task
+import org.gradle.api.tasks.TaskCollection
+import org.gradle.api.tasks.TaskContainer
 import org.gradle.kotlin.dsl.extra
+
+@Suppress("UNCHECKED_CAST")
+inline fun <reified T : Task> TaskContainer.lazyNamed(name: String): TaskCollection<out T> =
+    matching { it.name == name && it is T } as TaskCollection<out T>
 
 enum class ReleaseType(val id: String, val display: String) {
     SNAPSHOT("snapshots", "Snapshot"),
@@ -41,5 +49,8 @@ val Project.releaseType: ReleaseType
 
 val Project.hubbleOwned: Boolean
     get() = group.toString().startsWith("gg.hubblemc") ||
-        (project.hasProperty("hubble.owned") && project.property("hubble.owned").toString() == "true") ||
-        (project.extra.has("hubble.owned") && project.extra["hubble.owned"]?.toString() == "true")
+            (project.hasProperty("hubble.owned") && project.property("hubble.owned").toString() == "true") ||
+            (project.extra.has("hubble.owned") && project.extra["hubble.owned"]?.toString() == "true")
+
+fun <T> NamedDomainObjectContainer<T>.getOrCreate(name: String, create: T.() -> Unit): T =
+    findByName(name) ?: create(name) { create() }
