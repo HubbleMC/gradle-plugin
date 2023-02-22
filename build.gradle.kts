@@ -64,11 +64,10 @@ dependencies {
 }
 
 java {
+    withSourcesJar()
     toolchain {
         languageVersion.set(JavaLanguageVersion.of(17))
     }
-
-    withSourcesJar()
 }
 
 tasks.withType<KotlinCompile> {
@@ -82,26 +81,26 @@ gradlePlugin {
     website.set("https://zerite.dev")
     vcsUrl.set("https://github.com/HubbleMC/gradle-plugin")
 
-    plugins {
-        named("gg.hubblemc.paper").configure {
+    (plugins) {
+        "gg.hubblemc.paper" {
             displayName = "HubbleMC Paper Plugin"
             description = "Utilities for developing Paper plugins."
             tags.set(listOf("spigot", "paper", "minecraft"))
         }
 
-        named("gg.hubblemc.linting").configure {
+        "gg.hubblemc.linting" {
             displayName = "HubbleMC Linting Plugin"
             description = "Pre-configured linting for HubbleMC projects."
             tags.set(listOf("linting", "formatting", "code-style"))
         }
 
-        named("gg.hubblemc.velocity").configure {
+        "gg.hubblemc.velocity" {
             displayName = "HubbleMC Velocity Plugin"
             description = "Utilities for developing Velocity plugins."
             tags.set(listOf("velocity", "minecraft"))
         }
 
-        named("gg.hubblemc.defaults").configure {
+        "gg.hubblemc.defaults" {
             displayName = "HubbleMC Defaults Plugin"
             description = "Pre-configured defaults for HubbleMC projects."
             tags.set(listOf("defaults", "conventions"))
