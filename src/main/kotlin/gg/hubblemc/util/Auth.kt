@@ -42,6 +42,15 @@ fun MavenArtifactRepository.propertyCredentials(project: Project, prefix: String
  *
  * @param name The name of the property, formatted as `project.property.name`.
  */
-fun Project.propertyOrEnv(name: String): String? =
+internal fun Project.propertyOrEnv(name: String): String? =
     if (hasProperty(name)) property(name) as String
-    else System.getenv(name.toUpperCase().replace('.', '_'))
+    else System.getenv(name.uppercase().replace('.', '_'))
+
+/**
+ * Get a required property from the environment, or from the project properties.
+ *
+ * @param name The name of the property, formatted as `project.property.name`.
+ * @throws IllegalStateException If the property is not found.
+ */
+internal fun Project.requiredPropertyOrEnv(name: String): String =
+    propertyOrEnv(name) ?: throw IllegalStateException("Required property $name not found. Please set it in the environment or in the gradle.properties file.")
