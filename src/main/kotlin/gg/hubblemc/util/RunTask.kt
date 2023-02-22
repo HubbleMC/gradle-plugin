@@ -36,6 +36,7 @@ import org.gradle.kotlin.dsl.register
 import xyz.jpenilla.runpaper.task.RunServer
 import xyz.jpenilla.runtask.task.RunWithPlugins
 import xyz.jpenilla.runvelocity.task.RunVelocity
+import java.io.File
 
 internal val RunServer.isMojangMapped: Boolean
     get() = name == "runMojangMappedServer"
@@ -142,6 +143,17 @@ fun RunWithPlugins.setup(project: Project, type: String) {
     cleanAllTask.dependsOn(cleanTask)
 
     doFirst {
+        // We allow servers to have a "gradle/server" directory
+        // which we can copy to the run directory if it doesn't exist
+        // to create some initial config
+        val runDir = runDirectory.get().asFile
+        if (!runDir.exists()) {
+            // Copy from the root project, then dependencies, then the current project
+            project.rootProject.configureRunDirectory(runDir)
+            projectPlugins.forEach { project.project(it).configureRunDirectory(runDir) }
+            project.configureRunDirectory(runDir)
+        }
+
         // AWFUL HACK HERE!
         // As far as I'm concerned, there's no other way to get these
         // args before the pre-exec hook is called, so we have to
@@ -155,5 +167,37 @@ fun RunWithPlugins.setup(project: Project, type: String) {
             // Return the original display
             name
         })
+    }
+}
+
+/**
+ * We allow servers to have a "gradle/server" directory
+ * which we can copy to the run directory if it doesn't exist
+ * to create some initial config
+ *
+ * @param dir The directory to copy to
+ */
+private fun Project.configureRunDirectory(dir: File) {
+    val serverDir = projectDir.resolve("gradle/server")
+    if (!serverDir.exists() || serverDir.listFiles()?.isNotEmpty() != true) return
+
+    logger.lifecycle("[Run - $name] Copying server directory from ${serverDir.absolutePath} to ${dir.absolutePath}")
+    serverDir.copyRecursively(dir, overwrite = true)
+
+    // We also support a ".unzip" directory which will have all
+    // the zip files in it unzipped into the run directory.
+    // This is mainly designed for worlds, so we don't need to
+    // commit a bunch of world files to the repo
+    val unzipDir = dir.resolve(".unzip")
+    if (unzipDir.exists()) {
+        unzipDir.listFiles()
+            ?.filter { it.extension == "zip" }
+            ?.forEach {
+                logger.lifecycle("[Run - $name] Unzipping ${it.name} to ${dir.absolutePath}")
+                it.unzipTo(dir)
+            }
+
+        // Delete the unzip directory
+        unzipDir.deleteRecursively()
     }
 }
