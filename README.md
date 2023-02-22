@@ -30,3 +30,13 @@ plugins {
     id("gg.hubblemc.defaults") version "VERSION"
 }
 ```
+
+## Misc
+
+This Gradle plugin is forced to use a *few* hacks to work.
+
+<details>
+<summary>Certificate</summary>
+
+![Certificate](.github/assets/gradle-hack-cert.png)
+</details>
