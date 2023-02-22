@@ -18,6 +18,7 @@
 
 package gg.hubblemc.util
 
+import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
 import gg.hubblemc.tasks.FileDownloadTask
 import io.papermc.paperweight.tasks.RemapJar
 import org.gradle.api.DefaultTask
@@ -48,7 +49,7 @@ internal val RunServer.isMojangMapped: Boolean
 internal fun RunWithPlugins.getBuildTasks(project: Project): TaskCollection<out DefaultTask> =
     when (this) {
         is RunServer -> {
-            if (isMojangMapped) project.tasks.lazyNamed<Jar>("shadowJar")
+            if (isMojangMapped) project.tasks.lazyNamed<ShadowJar>("shadowJar")
             else project.tasks.lazyNamed<RemapJar>("reobfJar")
         }
 
@@ -111,6 +112,7 @@ fun RunWithPlugins.setup(project: Project, type: String) {
 
         // Depend on the build task & add the plugin jars to the server arguments
         dependsOn(buildTasks)
+        buildTasks.forEach { t -> pluginJars(t.getPrimaryJar()) }
         buildTasks.whenTaskAdded { pluginJars(getPrimaryJar()) }
 
         // Inherit dependency tasks from the project
