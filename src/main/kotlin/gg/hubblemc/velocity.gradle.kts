@@ -18,7 +18,6 @@
 
 package gg.hubblemc
 
-import gg.hubblemc.util.getOrCreate
 import gg.hubblemc.util.requiredPropertyOrEnv
 import gg.hubblemc.util.setup
 import xyz.jpenilla.runvelocity.RunVelocityPlugin
@@ -26,12 +25,6 @@ import xyz.jpenilla.runvelocity.task.RunVelocity
 
 // Read the properties
 val velocityVersion = requiredPropertyOrEnv("hubble.velocity.version")
-
-// Create a new configuration to download plugin jars and
-// add it as a dependency to the "runServer" task
-val pluginJarsConfiguration: Configuration = configurations.getOrCreate("pluginJarsVelocity") {
-    isTransitive = false
-}
 
 // Apply plugins
 apply<RunVelocityPlugin>()

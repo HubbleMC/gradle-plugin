@@ -31,9 +31,16 @@ fun RepositoryHandler.authenticatedMaven(url: String, name: String, project: Pro
 }
 
 fun MavenArtifactRepository.propertyCredentials(project: Project, prefix: String) {
-    credentials {
-        username = project.propertyOrEnv("$prefix.username")
-        password = project.propertyOrEnv("$prefix.password")
+    val username = project.propertyOrEnv("$prefix.username")
+    val password = project.propertyOrEnv("$prefix.password")
+
+    if (username != null && password != null) {
+        credentials {
+            this.username = username
+            this.password = password
+        }
+    } else {
+        project.logger.warn("No credentials found for repository $name, set $prefix.username and $prefix.password to use authentication.")
     }
 }
 

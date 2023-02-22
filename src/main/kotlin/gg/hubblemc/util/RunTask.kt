@@ -54,7 +54,7 @@ internal fun RunWithPlugins.getBuildTasks(project: Project): TaskCollection<out 
             else project.tasks.lazyNamed<RemapJar>("reobfJar")
         }
 
-        is RunVelocity -> project.tasks.lazyNamed<Jar>("jar")
+        is RunVelocity -> project.tasks.lazyNamed<ShadowJar>("shadowJar")
         else -> throw IllegalStateException("Unknown run task type: ${this::class.java}")
     }
 
