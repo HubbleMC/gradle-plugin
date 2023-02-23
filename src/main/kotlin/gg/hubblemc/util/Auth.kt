@@ -22,15 +22,43 @@ import org.gradle.api.Project
 import org.gradle.api.artifacts.dsl.RepositoryHandler
 import org.gradle.api.artifacts.repositories.MavenArtifactRepository
 import org.gradle.kotlin.dsl.maven
+import java.net.URI
 
-fun RepositoryHandler.authenticatedMaven(url: String, name: String, project: Project, block: MavenArtifactRepository.() -> Unit = {}) {
+/**
+ * De-duplication of warnings
+ */
+internal val warnedRepositories = mutableSetOf<URI>()
+
+/**
+ * Add a repository to the project, with credentials from the environment, or from the project properties.
+ *
+ * @param url The URL of the repository.
+ * @param prefix The prefix to use for the properties, formatted as `project.property.name`.
+ * @param project The project to get the properties from.
+ * @param warning Whether to log a warning if the credentials are not found.
+ * @param block A block to configure the repository.
+ */
+fun RepositoryHandler.authenticatedMaven(
+    url: String,
+    prefix: String,
+    project: Project,
+    warning: Boolean = true,
+    block: MavenArtifactRepository.() -> Unit = {}
+) {
     maven(url) {
         this.block()
-        propertyCredentials(project, name)
+        propertyCredentials(project, prefix, warning)
     }
 }
 
-fun MavenArtifactRepository.propertyCredentials(project: Project, prefix: String) {
+/**
+ * Add credentials to a repository from the environment, or from the project properties.
+ *
+ * @param project The project to get the properties from.
+ * @param prefix The prefix to use for the properties, formatted as `project.property.name`.
+ * @param warning Whether to log a warning if the credentials are not found.
+ */
+internal fun MavenArtifactRepository.propertyCredentials(project: Project, prefix: String, warning: Boolean = true) {
     val username = project.propertyOrEnv("$prefix.username")
     val password = project.propertyOrEnv("$prefix.password")
 
@@ -39,8 +67,10 @@ fun MavenArtifactRepository.propertyCredentials(project: Project, prefix: String
             this.username = username
             this.password = password
         }
-    } else {
-        project.logger.warn("No credentials found for repository $name, set $prefix.username and $prefix.password to use authentication.")
+    } else if (warning) {
+        if (warnedRepositories.contains(url)) return
+        project.logger.warn("No credentials found for repository $url, set $prefix.username and $prefix.password to use authentication.")
+        warnedRepositories.add(url)
     }
 }
 
@@ -60,4 +90,5 @@ internal fun Project.propertyOrEnv(name: String): String? =
  * @throws IllegalStateException If the property is not found.
  */
 internal fun Project.requiredPropertyOrEnv(name: String): String =
-    propertyOrEnv(name) ?: throw IllegalStateException("Required property $name not found. Please set it in the environment or in the gradle.properties file.")
+    propertyOrEnv(name)
+        ?: throw IllegalStateException("Required property $name not found. Please set it in the environment or in the gradle.properties file.")

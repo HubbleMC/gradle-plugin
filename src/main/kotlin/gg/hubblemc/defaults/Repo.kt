@@ -35,11 +35,11 @@ internal fun applyDefaultsRepo(project: Project) {
             // To use this, you must set either
             // Properties: hubble.username, hubble.password
             // Environment: HUBBLE_USERNAME, HUBBLE_PASSWORD
-            authenticatedMaven("https://repo.koding.dev/hubble-releases/", "hubble", project) {
+            authenticatedMaven("https://repo.koding.dev/hubble-releases/", "hubble", project, warning = false) {
                 name = "HubbleReleases"
             }
 
-            authenticatedMaven("https://repo.koding.dev/hubble-snapshots/", "hubble", project) {
+            authenticatedMaven("https://repo.koding.dev/hubble-snapshots/", "hubble", project, warning = false) {
                 name = "HubbleSnapshots"
             }
         }

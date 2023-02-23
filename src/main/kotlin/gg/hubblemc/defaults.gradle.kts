@@ -44,8 +44,7 @@ if (hubbleOwned) {
 
 // Print build info
 gradle.projectsEvaluated {
-    if (project.hasProperty("silent")) return@projectsEvaluated
-
+    if (!project.hasProperty("verbose")) return@projectsEvaluated
     if (rootProject == project && hubbleOwned) {
         val username = rootProject.propertyOrEnv("hubble.username")
         val password = rootProject.propertyOrEnv("hubble.password")
@@ -68,4 +67,5 @@ gradle.projectsEvaluated {
 
     val groupPrefix = group.takeIf { it.toString().isNotBlank() }?.let { "$it." } ?: ""
     logger.lifecycle("Building $groupPrefix${project.name} (version $version - release type ${project.releaseType})")
+    logger.lifecycle("")
 }
