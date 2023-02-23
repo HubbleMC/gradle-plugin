@@ -44,7 +44,7 @@ if (hubbleOwned) {
 
 // Print build info
 gradle.projectsEvaluated {
-    if (!project.hasProperty("verbose")) return@projectsEvaluated
+    if (!project.hasProperty("hubble.verbose")) return@projectsEvaluated
     if (rootProject == project && hubbleOwned) {
         val username = rootProject.propertyOrEnv("hubble.username")
         val password = rootProject.propertyOrEnv("hubble.password")
