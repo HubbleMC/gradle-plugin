@@ -67,5 +67,4 @@ gradle.projectsEvaluated {
 
     val groupPrefix = group.takeIf { it.toString().isNotBlank() }?.let { "$it." } ?: ""
     logger.lifecycle("Building $groupPrefix${project.name} (version $version - release type ${project.releaseType})")
-    logger.lifecycle("")
 }
