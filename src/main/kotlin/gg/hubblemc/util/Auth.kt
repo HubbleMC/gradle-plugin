@@ -58,7 +58,7 @@ fun RepositoryHandler.authenticatedMaven(
  * @param prefix The prefix to use for the properties, formatted as `project.property.name`.
  * @param warning Whether to log a warning if the credentials are not found.
  */
-internal fun MavenArtifactRepository.propertyCredentials(project: Project, prefix: String, warning: Boolean = true) {
+fun MavenArtifactRepository.propertyCredentials(project: Project, prefix: String, warning: Boolean = true) {
     val username = project.propertyOrEnv("$prefix.username")
     val password = project.propertyOrEnv("$prefix.password")
 
@@ -79,7 +79,7 @@ internal fun MavenArtifactRepository.propertyCredentials(project: Project, prefi
  *
  * @param name The name of the property, formatted as `project.property.name`.
  */
-internal fun Project.propertyOrEnv(name: String): String? =
+fun Project.propertyOrEnv(name: String): String? =
     if (hasProperty(name)) property(name) as String
     else System.getenv(name.uppercase().replace('.', '_'))
 
@@ -89,6 +89,6 @@ internal fun Project.propertyOrEnv(name: String): String? =
  * @param name The name of the property, formatted as `project.property.name`.
  * @throws IllegalStateException If the property is not found.
  */
-internal fun Project.requiredPropertyOrEnv(name: String): String =
+fun Project.requiredPropertyOrEnv(name: String): String =
     propertyOrEnv(name)
         ?: throw IllegalStateException("Required property $name not found. Please set it in the environment or in the gradle.properties file.")

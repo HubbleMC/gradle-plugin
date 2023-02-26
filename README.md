@@ -31,6 +31,11 @@ plugins {
 }
 ```
 
+## TODO
+
+- [ ] Automatically add dependency projects based on configurations
+- [ ] Generate parts of the Bukkit plugin.yml automatically (dependencies, etc)
+
 ## Misc
 
 This Gradle plugin is forced to use a *few* hacks to work.
