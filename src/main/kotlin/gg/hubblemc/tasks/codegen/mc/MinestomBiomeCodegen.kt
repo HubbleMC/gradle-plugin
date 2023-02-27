@@ -41,7 +41,7 @@ object MinestomBiomeCodegen : Codegen() {
             data.forEach {
                 val initializer = CodeBlock.builder()
                     .add("\$T.builder()\n", typeClass)
-                    .add("  .category(\$T.${it.category.toUpperCase()})\n", typeClass.nestedClass("Category"))
+                    .add("  .category(\$T.${it.category.uppercase()})\n", typeClass.nestedClass("Category"))
                     .add("  .name(\$T.from(\"minecraft:${it.name}\"))\n", namespaceIdClass)
                     .add("  .temperature(${it.temperature}F)\n")
                     .add("  .downfall(${it.rainfall}F)\n")
@@ -55,7 +55,7 @@ object MinestomBiomeCodegen : Codegen() {
                     .add("  .build()")
                     .build()
 
-                val field = FieldSpec.builder(typeClass, it.name.toUpperCase())
+                val field = FieldSpec.builder(typeClass, it.name.uppercase())
                     .addModifiers(Modifier.PUBLIC, Modifier.STATIC, Modifier.FINAL)
                     .initializer(initializer)
                     .build()
@@ -66,7 +66,7 @@ object MinestomBiomeCodegen : Codegen() {
                 ClassName.get("java.lang", "String"),
                 typeClass,
                 data.associate {
-                    "\"minecraft:${it.name}\"" to it.name.toUpperCase()
+                    "\"minecraft:${it.name}\"" to it.name.uppercase()
                 }
             )
         }.writeTo(folder)

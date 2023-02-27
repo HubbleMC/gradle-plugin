@@ -20,14 +20,14 @@ package gg.hubblemc
 
 import com.diffplug.gradle.spotless.SpotlessExtension
 import com.diffplug.gradle.spotless.SpotlessPlugin
-import org.jlleitschuh.gradle.ktlint.KtlintExtension
-import org.jlleitschuh.gradle.ktlint.KtlintIdeaPlugin
-import org.jlleitschuh.gradle.ktlint.KtlintPlugin
+import io.gitlab.arturbosch.detekt.Detekt
+import io.gitlab.arturbosch.detekt.DetektPlugin
+import io.gitlab.arturbosch.detekt.extensions.DetektExtension
+import io.gitlab.arturbosch.detekt.report.ReportMergeTask
 
 // Apply plugins
 apply<SpotlessPlugin>()
-apply<KtlintPlugin>()
-apply<KtlintIdeaPlugin>()
+apply<DetektPlugin>()
 
 // Configure spotless
 configure<SpotlessExtension> {
@@ -51,6 +51,9 @@ configure<SpotlessExtension> {
     pluginManager.withPlugin("java") {
         java {
             licenseFile?.let { licenseHeaderFile(it) }
+            removeUnusedImports()
+            trimTrailingWhitespace()
+            indentWithSpaces(4)
         }
     }
 
@@ -61,24 +64,64 @@ configure<SpotlessExtension> {
     }
 }
 
-// Configure ktlint
-configure<KtlintExtension> {
-    disabledRules.set(setOf("filename"))
-}
-
 // Create tasks
 tasks {
     register("lint") {
         group = "verification"
         description = "Runs all linting tasks"
 
-        dependsOn("spotlessCheck", "ktlintCheck")
+        dependsOn("spotlessCheck", "detekt")
     }
 
     register("lintFix") {
         group = "verification"
         description = "Runs all linting tasks and fixes any issues"
 
-        dependsOn("spotlessApply", "ktlintFormat")
+        dependsOn("spotlessApply")
     }
+}
+
+// Detekt
+configure<DetektExtension> {
+    buildUponDefaultConfig = true
+
+    // Configure the detekt config
+    val configFile = rootProject.file("gradle/detekt.yml")
+    config = if (!configFile.exists()) {
+        // Use a temp file
+        val tempFile = rootProject.file("build/tmp/detekt.yml")
+        tempFile.delete()
+
+        // Write the default config
+        tempFile.parentFile.mkdirs()
+        LintingPlugin::class.java.getResourceAsStream("/detekt.yml")
+            .use { input -> tempFile.outputStream().use { output -> input?.copyTo(output) } }
+
+        // Set the config file
+        files(tempFile)
+    } else files(configFile)
+}
+
+dependencies {
+    "detektPlugins"("io.gitlab.arturbosch.detekt:detekt-formatting:1.22.0")
+    "detektPlugins"("io.gitlab.arturbosch.detekt:detekt-rules-libraries:1.22.0")
+    "detektPlugins"("io.gitlab.arturbosch.detekt:detekt-rules-ruleauthors:1.22.0")
+}
+
+if (project == rootProject) {
+    tasks.register<ReportMergeTask>("detektReportMergeSarif") {
+        input.from(tasks.withType<Detekt>().map { it.sarifReportFile })
+        output.set(rootProject.layout.buildDirectory.file("reports/detekt/merge.sarif"))
+    }
+}
+
+tasks.withType<Detekt> {
+    reports {
+        sarif.required.set(true)
+        md.required.set(true)
+    }
+
+    jvmTarget = "1.8"
+    basePath = rootProject.projectDir.absolutePath
+    finalizedBy(":detektReportMergeSarif")
 }

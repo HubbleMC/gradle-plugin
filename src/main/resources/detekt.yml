@@ -1,0 +1,16 @@
+build:
+  maxIssues: -1 # Never fail the build
+
+processors:
+  active: true
+
+style:
+  MagicNumber:
+    active: false
+
+output-reports:
+  active: true
+  exclude:
+    - 'HtmlOutputReport'
+    - 'TxtOutputReport'
+    - 'XmlOutputReport'

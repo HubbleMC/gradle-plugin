@@ -43,24 +43,20 @@ dependencies {
     implementation("com.google.code.gson:gson:2.10")
 
     // Feature - Linting
-    implementation("com.diffplug.spotless:com.diffplug.spotless.gradle.plugin:6.10.0")
-    implementation("org.jlleitschuh.gradle.ktlint:org.jlleitschuh.gradle.ktlint.gradle.plugin:11.2.0")
-    implementation("org.jlleitschuh.gradle.ktlint-idea:org.jlleitschuh.gradle.ktlint-idea.gradle.plugin:11.2.0")
+    implementation("com.diffplug.spotless:spotless-plugin-gradle:6.10.0")
+    implementation("io.gitlab.arturbosch.detekt:detekt-gradle-plugin:1.22.0")
 
     // Feature - Defaults
-    implementation("com.github.johnrengelman.shadow:com.github.johnrengelman.shadow.gradle.plugin:7.1.2")
-    implementation("com.palantir.git-version:com.palantir.git-version.gradle.plugin:0.15.0")
+    implementation("gradle.plugin.com.github.johnrengelman:shadow:7.1.2")
+    implementation("com.palantir.gradle.gitversion:gradle-git-version:0.15.0")
 
     // Feature - Paper
-    implementation("com.github.jpenilla.plugin-yml:net.minecrell.plugin-yml.bukkit.gradle.plugin:4553fb2dd8")
-    implementation("xyz.jpenilla.run-paper:xyz.jpenilla.run-paper.gradle.plugin:2.0.1")
+    implementation("net.minecrell:plugin-yml:0.5.3")
+    implementation("xyz.jpenilla:run-task:2.0.1")
     implementation("io.papermc.paperweight.userdev:io.papermc.paperweight.userdev.gradle.plugin:1.3.7")
 
-    // Feature - Velocity
-    implementation("xyz.jpenilla.run-velocity:xyz.jpenilla.run-velocity.gradle.plugin:2.0.1")
-
     // Other dependencies
-    implementation("org.jetbrains.kotlin:kotlin-gradle-plugin:1.7.10")
+    implementation(kotlin("gradle-plugin"))
 }
 
 java {
