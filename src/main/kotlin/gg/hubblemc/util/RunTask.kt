@@ -121,12 +121,15 @@ fun RunWithPlugins.setup(project: Project, type: String) {
         dependsOn(depProj.tasks.lazyNamed<RunWithPlugins>(name).map { i -> i.dependsOn })
     }
 
-    // Clone the pluginJars from dependency projects
-    val dependencyTasks = projectPlugins.map {
-        project.project(it).tasks.lazyNamed<RunWithPlugins>(name).map { i -> i.pluginJars }
+    // Alleviate ordering issues
+    project.gradle.projectsEvaluated {
+        // Clone the plugin jars from dependency projects
+        projectPlugins.forEach {
+            val named = project.project(it).tasks.lazyNamed<RunWithPlugins>(name)
+            pluginJars.from(named.map { i -> i.pluginJars })
+            dependsOn(named.map { i -> i.dependsOn })
+        }
     }
-
-    pluginJars.from(*dependencyTasks.toTypedArray())
 
     // Add a cleanup task
     val cleanTask = project.tasks.register<Delete>("clean${name.capitalized()}") {
