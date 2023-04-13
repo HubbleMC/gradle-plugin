@@ -22,6 +22,7 @@ import gg.hubblemc.util.hubbleOwned
 import gg.hubblemc.util.propertyOrEnv
 import gg.hubblemc.util.requiredPropertyOrEnv
 import gg.hubblemc.util.setup
+import io.papermc.paperweight.tasks.RemapJar
 import io.papermc.paperweight.userdev.PaperweightUser
 import net.minecrell.pluginyml.bukkit.BukkitPlugin
 import net.minecrell.pluginyml.bukkit.BukkitPluginDescription
@@ -78,4 +79,21 @@ tasks.withType<RunServer> {
 
     // Set up the run task
     setup(project, "paper")
+}
+
+pluginManager.withPlugin("maven-publish") {
+    // Configure the Maven publication
+    configure<PublishingExtension> {
+        publications {
+            all {
+                if (this !is MavenPublication) return@all
+
+                // Add the remapped jar as an artifact
+                val task = tasks.named<RemapJar>("reobfJar")
+                artifact(task.map { it.outputJar }) {
+                    builtBy(task)
+                }
+            }
+        }
+    }
 }

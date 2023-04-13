@@ -35,6 +35,8 @@ plugins {
 
 - [ ] Automatically add dependency projects based on configurations
 - [ ] Generate parts of the Bukkit plugin.yml automatically (dependencies, etc)
+- [ ] Allow dependencies to be downloaded from Jenkins with a utility function
+- [ ] Allow dependencies to be downloaded from GitHub (and processed) with a utility function
 
 ## Misc
 
