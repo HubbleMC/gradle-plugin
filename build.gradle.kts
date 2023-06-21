@@ -43,17 +43,17 @@ dependencies {
     implementation("com.google.code.gson:gson:2.10")
 
     // Feature - Linting
-    implementation("com.diffplug.spotless:spotless-plugin-gradle:6.10.0")
-    implementation("io.gitlab.arturbosch.detekt:detekt-gradle-plugin:1.22.0")
+    implementation("com.diffplug.spotless:spotless-plugin-gradle:6.19.0")
+    implementation("io.gitlab.arturbosch.detekt:detekt-gradle-plugin:1.23.0")
 
     // Feature - Defaults
-    implementation("gradle.plugin.com.github.johnrengelman:shadow:7.1.2")
-    implementation("com.palantir.gradle.gitversion:gradle-git-version:0.15.0")
+    implementation("com.github.johnrengelman:shadow:8.1.1")
+    implementation("com.palantir.gradle.gitversion:gradle-git-version:3.0.0")
 
     // Feature - Paper
-    implementation("net.minecrell:plugin-yml:0.5.3")
-    implementation("xyz.jpenilla:run-task:2.0.1")
-    implementation("io.papermc.paperweight.userdev:io.papermc.paperweight.userdev.gradle.plugin:1.3.7")
+    implementation("com.github.Minecrell:plugin-yml:b79c47a1ce")
+    implementation("xyz.jpenilla:run-task:2.1.0")
+    implementation("io.papermc.paperweight:paperweight-userdev:1.5.5")
 
     // Other dependencies
     implementation(kotlin("gradle-plugin"))

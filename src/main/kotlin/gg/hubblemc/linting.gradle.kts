@@ -77,7 +77,7 @@ tasks {
         group = "verification"
         description = "Runs all linting tasks and fixes any issues"
 
-        dependsOn("spotlessApply")
+        dependsOn("spotlessApply", "detektFix")
     }
 }
 
@@ -87,19 +87,21 @@ configure<DetektExtension> {
 
     // Configure the detekt config
     val configFile = rootProject.file("gradle/detekt.yml")
-    config = if (!configFile.exists()) {
-        // Use a temp file
-        val tempFile = rootProject.file("build/tmp/detekt.yml")
-        tempFile.delete()
+    config.from(
+        if (!configFile.exists()) {
+            // Use a temp file
+            val tempFile = rootProject.file("build/tmp/detekt.yml")
+            tempFile.delete()
 
-        // Write the default config
-        tempFile.parentFile.mkdirs()
-        LintingPlugin::class.java.getResourceAsStream("/detekt.yml")
-            .use { input -> tempFile.outputStream().use { output -> input?.copyTo(output) } }
+            // Write the default config
+            tempFile.parentFile.mkdirs()
+            LintingPlugin::class.java.getResourceAsStream("/detekt.yml")
+                .use { input -> tempFile.outputStream().use { output -> input?.copyTo(output) } }
 
-        // Set the config file
-        files(tempFile)
-    } else files(configFile)
+            // Set the config file
+            files(tempFile)
+        } else files(configFile)
+    )
 }
 
 dependencies {
@@ -115,13 +117,37 @@ if (project == rootProject) {
     }
 }
 
-tasks.withType<Detekt> {
-    reports {
-        sarif.required.set(true)
-        md.required.set(true)
+tasks {
+    withType<Detekt> {
+        reports {
+            sarif.required.set(true)
+            md.required.set(true)
+        }
+
+        jvmTarget = "1.8"
+        basePath = rootProject.projectDir.absolutePath
+        finalizedBy(":detektReportMergeSarif")
     }
 
-    jvmTarget = "1.8"
-    basePath = rootProject.projectDir.absolutePath
-    finalizedBy(":detektReportMergeSarif")
+    register<Detekt>("detektFix") {
+        group = "verification"
+        description = "Runs Detekt and fixes any issues"
+
+        // We need to manually clone the detekt config for the default task
+        val detekt = tasks.named<Detekt>("detekt").get()
+        this.jdkHome.convention(detekt.jdkHome)
+        this.jvmTarget = detekt.jvmTarget
+
+        this.config.setFrom(detekt.config)
+        this.debug = detekt.debug
+        this.parallel = detekt.parallel
+        this.disableDefaultRuleSets = detekt.disableDefaultRuleSets
+        this.buildUponDefaultConfig = detekt.buildUponDefaultConfig
+        this.ignoreFailures = detekt.ignoreFailures
+        this.basePath = detekt.basePath
+        this.allRules = detekt.allRules
+
+        // And now for the one we actually care about :)
+        this.autoCorrect = true
+    }
 }
