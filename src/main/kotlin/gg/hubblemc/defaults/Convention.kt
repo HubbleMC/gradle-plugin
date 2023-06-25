@@ -48,15 +48,14 @@ internal fun applyDefaultsConvention(project: Project) {
 
     // Allow the project version to be defined by a property
     val gitVersion: groovy.lang.Closure<String> by project.extra
-    project.version = project.project.property("version")?.unlessUnspecified()
-        ?: project.rootProject.version.toString().unlessUnspecified()
-        ?: project.version.unlessUnspecified()
-        ?: "Git-${gitVersion().removeSuffix(".dirty")}"
+    project.version = project.project.property("version")?.unlessDefault()
+        ?: project.rootProject.version.unlessDefault()
+                ?: project.version.unlessDefault()
+                ?: runCatching { "Git-${gitVersion().removeSuffix(".dirty")}" }.getOrNull()
+                ?: "unspecified"
 
     // Inherit project group from root project
-    project.group = project.rootProject.group.toString().unlessUnspecified()
-        ?: project.group.unlessUnspecified()
-        ?: "gg.hubblemc"
+    project.group = project.rootProject.group.toString().unlessDefault() ?: project.group
 
     // Suffix the version with "-SNAPSHOT" if the project is not a release
     if (project.project.releaseType == ReleaseType.SNAPSHOT && !project.version.toString().contains("-SNAPSHOT")) {
@@ -64,4 +63,4 @@ internal fun applyDefaultsConvention(project: Project) {
     }
 }
 
-fun Any.unlessUnspecified(): String? = toString().takeUnless { it == "unspecified" || it.isBlank() }
+fun Any.unlessDefault(): String? = toString().takeUnless { it == "unspecified" || it.isBlank() }
